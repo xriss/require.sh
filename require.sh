@@ -125,26 +125,22 @@ name="$1"
 }
 
 INSTALL="echo require.sh supported package manager not found"
-if   ispac apt-get  ; then INSTALL="apt-get install -y"
-elif ispac pacman   ; then INSTALL="pacman --sync --noconfirm"
-elif ispac apt-cyg  ; then INSTALL="apt-cyg install -y"
-elif ispac homebrew ; then INSTALL="echo require.sh homebrew unsuported"
-elif ispac macports ; then INSTALL="echo require.sh macports unsuported"
-elif ispac yum      ; then INSTALL="echo require.sh yum unsuported"
-elif ispac rpm      ; then INSTALL="echo require.sh rpm unsuported"
-elif ispac portage  ; then INSTALL="echo require.sh portage unsuported"
-elif ispac zypper   ; then INSTALL="echo require.sh zypper unsuported"
-elif ispac pkgng    ; then INSTALL="echo require.sh pkgng unsuported"
-elif ispac cave     ; then INSTALL="echo require.sh cave unsuported"
-elif ispac pkg      ; then INSTALL="echo require.sh pkg unsuported"
-elif ispac sun      ; then INSTALL="echo require.sh sun unsuported"
-elif ispac apk      ; then INSTALL="echo require.sh apk unsuported"
-elif ispac opkg     ; then INSTALL="echo require.sh opkg unsuported"
-elif ispac tazpkg   ; then INSTALL="echo require.sh tazpkg unsuported"
-elif ispac swupd    ; then INSTALL="echo require.sh swupd unsuported"
-elif ispac tlmgr    ; then INSTALL="echo require.sh tlmgr unsuported"
-elif ispac conda    ; then INSTALL="echo require.sh conda unsuported"
-elif ispac snap     ; then INSTALL="snap install"
+if   ispac apt-get ; then INSTALL="apt-get install -y"
+elif ispac pacman  ; then INSTALL="pacman --sync --noconfirm"
+elif ispac apt-cyg ; then INSTALL="apt-cyg install -y"
+elif ispac pkg     ; then INSTALL="pkg install"
+elif ispac yum     ; then INSTALL="yum install"
+elif ispac dnf     ; then INSTALL="dnf install"
+elif ispac emerge  ; then INSTALL="emerge"
+elif ispac zypper  ; then INSTALL="zypper install"
+elif ispac swupd   ; then INSTALL="swupd bundle-add"
+elif ispac opkg    ; then INSTALL="opkg install"
+elif ispac tazpkg  ; then INSTALL="tazpkg get-install"
+elif ispac tlmgr   ; then INSTALL="tlmgr install"
+elif ispac conda   ; then INSTALL="conda install"
+elif ispac brew    ; then INSTALL="brew cask install"
+elif ispac port    ; then INSTALL="port install"
+elif ispac snap    ; then INSTALL="snap install"
 fi
 
 
@@ -216,10 +212,9 @@ require [--flags] name [name...]
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt-get pacman apt-cyg homebrew macports yum rpm 
-		portage zypper pkgng cave pkg sun apk opkg tazpkg swupd tlmgr conda 
-		snap    
-	
+		following values : apt-get pacman apt-cyg pkg yum dnf emerge zypper 
+		swupd opkg tazpkg tlmgr conda brew port snap   
+			
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
 		run them.
