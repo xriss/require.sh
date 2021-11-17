@@ -1,57 +1,52 @@
 #!/bin/bash
 
+#force a package manager
+#export REQUIRE_PAC="apk"
+
+
 
 #simeple OS sniff, the first package manager we find is the one to use, if you have multiple package managers then...
 
-INSTALL="echo require.sh does not know how to install"
+ispac() {
+declare -a 'a=('"$1"')'
+name=${a[0]}
 
-#I guess we should try all of these
+if [[ -n "$REQUIRE_PAC" ]] ; then
+	if [[ "$REQUIRE_PAC" == "$name" ]] ; then return 0 ; fi
+	return 1
+else
+	if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+	return 1
+fi
 
-#	apt-get			on Debian, Ubuntu, etc.
-#	pacman			on Arch Linux-based systems, ArchBang, Manjaro, etc.
-#	apt-cyg			on Cygwin (via apt-cyg)
-#	homebrew		on Mac OS X
-#	macports		on Mac OS X
-#	yum/rpm			by Redhat, CentOS, Fedora, Oracle Linux, etc.
-#	portage			by Gentoo
-#	zypper			by OpenSUSE
-#	pkgng			by FreeBSD
-#	cave			by Exherbo Linux
-#	pkg				tools by OpenBSD
-#	sun				tools by Solaris(SunOS)
-#	apk				by Alpine Linux
-#	opkg			by OpenWrt
-#	tazpkg			by SliTaz Linux
-#	swupd			by Clear Linux
-#	tlmgr			by TeX Live
-#	conda			by Conda
+}
 
-
-
-
-if   command -v apt-get ; then
-
-
-INSTALL="sudo apt-get install -y"
-
-
-elif command -v pacman ; then
-
-
-INSTALL="sudo pacman --sync --noconfirm"
-
-
-elif command -v snap ; then
-
-
-INSTALL="sudo snap install"
-
-
+INSTALL="echo require.sh supported package manager not found"
+if   ispac apt-get  ; then INSTALL="apt-get install -y"
+elif ispac pacman   ; then INSTALL="pacman --sync --noconfirm"
+elif ispac apt-cyg  ; then INSTALL="apt-cyg install -y"
+elif ispac homebrew ; then INSTALL="echo require.sh homebrew unsuported"
+elif ispac macports ; then INSTALL="echo require.sh macports unsuported"
+elif ispac yum      ; then INSTALL="echo require.sh yum unsuported"
+elif ispac rpm      ; then INSTALL="echo require.sh rpm unsuported"
+elif ispac portage  ; then INSTALL="echo require.sh portage unsuported"
+elif ispac zypper   ; then INSTALL="echo require.sh zypper unsuported"
+elif ispac pkgng    ; then INSTALL="echo require.sh pkgng unsuported"
+elif ispac cave     ; then INSTALL="echo require.sh cave unsuported"
+elif ispac pkg      ; then INSTALL="echo require.sh pkg unsuported"
+elif ispac sun      ; then INSTALL="echo require.sh sun unsuported"
+elif ispac apk      ; then INSTALL="echo require.sh apk unsuported"
+elif ispac opkg     ; then INSTALL="echo require.sh opkg unsuported"
+elif ispac tazpkg   ; then INSTALL="echo require.sh tazpkg unsuported"
+elif ispac swupd    ; then INSTALL="echo require.sh swupd unsuported"
+elif ispac tlmgr    ; then INSTALL="echo require.sh tlmgr unsuported"
+elif ispac conda    ; then INSTALL="echo require.sh conda unsuported"
+elif ispac snap     ; then INSTALL="snap install"
 fi
 
 
 
-echo $INSTALL $*
+echo sudo $INSTALL $*
 
 
 
