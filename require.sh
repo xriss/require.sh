@@ -9,8 +9,8 @@ pmap["test"]="special special2 special3"
 
 
 declare -A argf
-# configure these to not expect values so will not steal the next token
-#argf[booleanflag]="1"
+# configure these flags to not expect values so will not steal the next token
+argf[dry]="1"
 
 # fill in these arrays as output
 declare -A args
@@ -48,6 +48,7 @@ for arg in "$@" ; do
 					if [[ ${argf[$set]} ]] ; then # no val expected
 						flags["$set"]="1"
 					else
+						flags["$set"]="1" # temporary value
 						mode=set
 					fi
 				fi
@@ -63,15 +64,28 @@ done
 
 # process flags we found here and probably overwrite env vars
 
+if [[ -z "${args[0]}"  ]] ; then # print help if no names
+	REQUIRE_HELP=1
+fi
 for key in "${!flags[@]}" ; do
 	val=${flags[$key]}
-
-	echo flag $key $val
 
 	case $key in
 
 		"pac")
 			export REQUIRE_PAC="$val"
+		;;
+
+		"DRY")
+			export REQUIRE_DRY="$val"
+		;;
+
+		"help")
+			export REQUIRE_HELP="$val"
+		;;
+
+		*)
+			echo "unknown flag $key=$val"
 		;;
 
 	esac
@@ -87,16 +101,15 @@ done
 declare -x REQUIRE_PAC
 
 ispac() {
-declare -a 'a=('"$1"')'
-name=${a[0]}
+name="$1"
 
-if [[ -n "$REQUIRE_PAC" ]] ; then
-	if [[ "$REQUIRE_PAC" == "$name" ]] ; then return 0 ; fi
-	return 1
-else
-	if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
-	return 1
-fi
+	if [[ -n "$REQUIRE_PAC" ]] ; then
+		if [[ "$REQUIRE_PAC" == "$name" ]] ; then return 0 ; fi
+		return 1
+	else
+		if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+		return 1
+	fi
 
 }
 
@@ -141,31 +154,62 @@ name="$1"
 installpac() {
 name="$1"
 
-# do nothing if command exists
-if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
-
-# might need to try multiple names so loop over them
-pnames=($(getpac $name))
-for pname in "${pnames[@]}" ; do
-
-	# say what we are going to do
-	echo sudo $INSTALL $pname
-	# try and do it
-#	sudo $INSTALL $pname
-
-	# exit if command now exists
+	# do nothing if command exists
 	if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
 
-done
+	# might need to try multiple names so loop over them
+	pnames=($(getpac $name))
+	for pname in "${pnames[@]}" ; do
+
+		# say what we are going to do
+		echo sudo $INSTALL $pname
+		# try and do it
+		if [[ -z "REQUIRE_DRY" ]] ; then
+echo			sudo $INSTALL $pname
+		fi
+		
+		# exit if command now exists
+		if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+
+	done
 
 }
 
 
+if [[ -n "$REQUIRE_HELP" ]] ; then
 
-# process args
+	cat <<EOF
 
-for arg in "${args[@]}" ; do
+require [--flags] command ...
 
-	installpac $arg
+	Attempt to sudo install packages to provide all the given commands using 
+	whatever packagemanager we can find. Do nothing if the commands already 
+	exist in the path.
+	
+	Possible --flags are :
+	
+	--pac=name
+		Force the use of this package manager which should be one of the 
+		following values : apt-get pacman apt-cyg homebrew macports yum rpm 
+		portage zypper pkgng cave pkg sun apk opkg tazpkg swupd tlmgr conda 
+		snap    
+	
+	--dry
+		Enable dry run, we will print the commands we want to run but will not 
+		run them.
+		
+	--no-*
+		Disable a previously set flag where * is the flag name. eg --no-dry
 
-done
+EOF
+
+else
+
+	# process args
+	for arg in "${args[@]}" ; do
+
+		installpac $arg
+
+	done
+
+fi
