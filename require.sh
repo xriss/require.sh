@@ -4,7 +4,7 @@
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
 
-pmap["test"]="special special2 special3"
+pmap["mingw"]="mingw-w64"
 
 
 
@@ -14,6 +14,7 @@ argf["help"]="1"
 argf["dry"]="1"
 argf["quiet"]="1"
 argf["force"]="1"
+argf["reinstall-this-script"]="1"
 
 # fill in these arrays as output
 declare -A args
@@ -94,6 +95,11 @@ for key in "${!flags[@]}" ; do
 		"help")
 			export REQUIRE_HELP="$val"
 		;;
+
+		"reinstall-this-script")
+			export REQUIRE_REINSTALL_THIS_SCRIPT="$val"
+		;;
+
 
 		*)
 			echo "unknown flag $key=$val"
@@ -192,7 +198,18 @@ name="$1"
 }
 
 
-if [[ -n "$REQUIRE_HELP" ]] ; then
+if [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
+
+	sudo cat >/tmp/download-require.sh <<EOF
+
+sudo wget -O /usr/local/bin/require https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+sudo chmod +x /usr/local/bin/require
+
+EOF
+	sudo chmod +x /tmp/download-require.sh
+	/tmp/download-require.sh
+
+elif [[ -n "$REQUIRE_HELP" ]] ; then
 
 	cat <<EOF
 
@@ -225,6 +242,9 @@ require [--flags] name [name...]
 	--force
 		Do not check if command exists, always try and install each candidate 
 		package. Usefull for packages that do not provide a command.
+		
+	--reinstall-this-script
+		Reinstall this script from github using wget.
 
 	--no-*
 		Disable a previously set flag where * is the flag name. eg --no-dry
