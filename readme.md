@@ -14,4 +14,4 @@ By default we just assume that the package name is the same as the command eg:
 	require git
 
 Will check if the git command exists and if not will install the git package 
-using whatever package manager make we can find.
+using whatever package manager we can find.

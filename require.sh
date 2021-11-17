@@ -12,6 +12,8 @@ declare -A argf
 # configure these flags to not expect values so will not steal the next token
 argf["help"]="1"
 argf["dry"]="1"
+argf["quiet"]="1"
+argf["force"]="1"
 
 # fill in these arrays as output
 declare -A args
@@ -77,8 +79,16 @@ for key in "${!flags[@]}" ; do
 			export REQUIRE_PAC="$val"
 		;;
 
-		"DRY")
+		"dry")
 			export REQUIRE_DRY="$val"
+		;;
+
+		"quiet")
+			export REQUIRE_QUIET="$val"
+		;;
+
+		"force")
+			export REQUIRE_FORCE="$val"
 		;;
 
 		"help")
@@ -152,26 +162,35 @@ name="$1"
 
 # install a package if the command does not exist
 
-installpac() {
+installcommand() {
 name="$1"
 
 	# do nothing if command exists
-	if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
-
+	if ! [[ -n "$REQUIRE_FORCE" ]] ; then
+		if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+	fi
+	
 	# might need to try multiple names so loop over them
 	pnames=($(getpac $name))
 	for pname in "${pnames[@]}" ; do
 
 		# say what we are going to do
-		echo sudo $INSTALL $pname
+		if ! [[ -n "$REQUIRE_QUIET" ]] ; then
+			echo "require.sh is trying to sudo $INSTALL $pname"
+		fi
 		# try and do it
-		if [[ -z "REQUIRE_DRY" ]] ; then
-echo			sudo $INSTALL $pname
+		if ! [[ -n "$REQUIRE_DRY" ]] ; then
+			if [[ -n "$REQUIRE_QUIET" ]] ; then
+				sudo $INSTALL $pname > /dev/null 2>&1
+			else
+				sudo $INSTALL $pname
+			fi
 		fi
 		
 		# exit if command now exists
-		if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
-
+		if ! [[ -n "$REQUIRE_FORCE" ]] ; then
+			if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+		fi
 	done
 
 }
@@ -181,11 +200,14 @@ if [[ -n "$REQUIRE_HELP" ]] ; then
 
 	cat <<EOF
 
-require [--flags] command [comamnd] [command...]
+require [--flags] name [name...]
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
-	exist in the path.
+	exist in the path. We assume the package name and command name are the same 
+	but also have a list of exceptions and alternative names we can try. We may 
+	need to try a few candidates so just because you see an error does not mean 
+	that we did not suceed.
 	
 	Possible --flags are :
 	
@@ -201,7 +223,14 @@ require [--flags] command [comamnd] [command...]
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
 		run them.
-		
+
+	--quiet
+		Do not print the output from the package manager.
+
+	--force
+		Do not check if command exists, always try and install each candidate 
+		package. Usefull for packages that do not provide a command.
+
 	--no-*
 		Disable a previously set flag where * is the flag name. eg --no-dry
 		
@@ -217,7 +246,7 @@ else
 	# process args
 	for arg in "${args[@]}" ; do
 
-		installpac $arg
+		installcommand $arg
 
 	done
 
