@@ -10,7 +10,8 @@ pmap["test"]="special special2 special3"
 
 declare -A argf
 # configure these flags to not expect values so will not steal the next token
-argf[dry]="1"
+argf["help"]="1"
+argf["dry"]="1"
 
 # fill in these arrays as output
 declare -A args
@@ -180,7 +181,7 @@ if [[ -n "$REQUIRE_HELP" ]] ; then
 
 	cat <<EOF
 
-require [--flags] command ...
+require [--flags] command [comamnd] [command...]
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
@@ -188,8 +189,11 @@ require [--flags] command ...
 	
 	Possible --flags are :
 	
-	--pac=name
-		Force the use of this package manager which should be one of the 
+	--help
+		Print this help text.
+
+	--pac=*
+		Force the use of this package manager where * should be one of the 
 		following values : apt-get pacman apt-cyg homebrew macports yum rpm 
 		portage zypper pkgng cave pkg sun apk opkg tazpkg swupd tlmgr conda 
 		snap    
@@ -200,6 +204,11 @@ require [--flags] command ...
 		
 	--no-*
 		Disable a previously set flag where * is the flag name. eg --no-dry
+		
+	These flags can also be set using environment variables prefixed with 
+	REQUIRE_ and capitalize eg :
+		export REQUIRE_DRY=1
+	Would enable the --dry flag but still allow it to be unset with --no-dry
 
 EOF
 
