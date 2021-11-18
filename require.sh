@@ -4,7 +4,17 @@
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
 
+pmap["build-essential"]="build-essential base-devel"
 pmap["mingw"]="mingw-w64"
+pmap["libreadline-dev"]="libreadline-dev readline"
+pmap["libluajit-5.1-dev"]="libluajit-5.1-dev luajit"
+pmap["libssl-dev"]="libssl-dev openssl"
+pmap["libsdl2-dev"]="libsdl2-devsdl2"
+pmap["libgl1-mesa-dev"]="libgl1-mesa-dev mesa"
+pmap["libx11-dev"]="libx11-dev libx11"
+pmap["libasound2-dev"]="libasound2-dev alsa-lib"
+pmap["libudev-dev"]="libudev-dev libudev"
+pmap["libpulse-dev"]="libpulse-dev libpulse"
 
 
 
