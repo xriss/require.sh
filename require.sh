@@ -1,20 +1,26 @@
 #!/bin/bash
 
+trap ' trap - INT ;  kill -s INT "$$" ' INT
+
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
+
+# I guess we should generate this from a better database...
 
 pmap["build-essential"]="build-essential base-devel"
 pmap["mingw"]="mingw-w64"
 pmap["libreadline-dev"]="libreadline-dev readline"
 pmap["libluajit-5.1-dev"]="libluajit-5.1-dev luajit"
-pmap["libssl-dev"]="libssl-dev openssl"
+pmap["libssl-dev"]="libssl-dev openssl openssl-devel"
 pmap["libsdl2-dev"]="libsdl2-devsdl2"
-pmap["libgl1-mesa-dev"]="libgl1-mesa-dev mesa"
-pmap["libx11-dev"]="libx11-dev libx11"
-pmap["libasound2-dev"]="libasound2-dev alsa-lib"
+pmap["libgl1-mesa-dev"]="libgl1-mesa-dev mesa mesa-libGL-devel"
+pmap["libx11-dev"]="libx11-dev libx11 libX11-devel"
+pmap["libasound2-dev"]="libasound2-dev alsa-lib alsa-lib-devel"
 pmap["libudev-dev"]="libudev-dev libudev"
 pmap["libpulse-dev"]="libpulse-dev libpulse"
+
+
 
 
 
@@ -179,7 +185,11 @@ name="$1"
 
 	# do nothing if command exists
 	if ! [[ -n "$REQUIRE_FORCE" ]] ; then
-		if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+		if [[ "${name:0:1}" = "/" ]] ; then
+			if [[ -e "$name" ]] ; then return 0 ; fi
+		else
+			if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+		fi
 	fi
 	
 	# might need to try multiple names so loop over them
@@ -201,7 +211,11 @@ name="$1"
 		
 		# exit if command now exists
 		if ! [[ -n "$REQUIRE_FORCE" ]] ; then
-			if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+			if [[ "${name:0:1}" = "/" ]] ; then
+				if [[ -e "$name" ]] ; then return 0 ; fi
+			else
+				if [[ -x "$(command -v $name)" ]] ; then return 0 ; fi
+			fi
 		fi
 	done
 
