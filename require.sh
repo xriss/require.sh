@@ -85,7 +85,8 @@ for key in "${!flags[@]}" ; do
 
 		*)
 			if [[ ${boolean_flaga[$key]} ]] ; then
-				export REQUIRE_${key^^}="$val"
+				envkey=${key//-/_}
+				export REQUIRE_${envkey^^}="$val"
 			else
 				echo "unknown flag $key=$val"
 				exit 20
