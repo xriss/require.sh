@@ -1,24 +1,17 @@
 REQUIRE.SH
 ==========
 
-It makes sense to clean this up and split it off into it's own repo as I keep 
-having to do it.
+This bash script attempts to install packages, probably for a command, in a 
+generic way across multiple package managers.
 
-This is intended to be developed by watching it break and then fixing it.
-
-Which means if it breaks for you then you get to fix it :)
-
-Probably that just means changing the dictionaries at the top of the require.sh 
-script to fix a package name.
-
-By default we just assume that the package name is the same as the command eg:
+By default we just assume that the package name is the same as the command
 
 	require git
 
-Will check if the git command exists and if not will install the a package 
-named git using whatever package manager we can find.
+Will check if the git command exists and if not will install a package named 
+git using whatever package manager we can find.
 
-If however you give a fullpath, eg: something beginning with /
+If however you give a fullpath, something beginning with /
 
 	require /usr/include/libudev.h
 
@@ -26,6 +19,20 @@ Then we will check if this file exists and if not attempt to find a package
 that would install that exact file. Include files are a good one to pick as it 
 should install the dev package and the library and they should be a more 
 generic path than .so files.
+
+
+DEVELOPMENT
+===========
+
+This is intended to be developed by watching it break and then fixing it. Which 
+means if it breaks for you then you get to fix it :)
+
+Probably that just means changing the dictionaries at the top of the require.sh 
+script to fix a package name.
+
+
+INSTALL
+=======
 
 You can install require.sh by copying the bash script to /usr/local/bin/require 
 with +x So this snippet will download the latest version from github.
@@ -41,6 +48,7 @@ Will give you more information about how to use it and the output is what you
 will see below.
 
 HELP
+====
 
 ./require.sh [--flags] name [name...]
 
