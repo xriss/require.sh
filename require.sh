@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.1"
+REQUIRE_VERSION_NUMBER="0.11"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -174,10 +174,14 @@ name="$1"
 	case $PAC in
 
 		"apt")
-			line=$( dpkg -S $name | tail --lines=1 )
+			line=$( dpkg -S $name 2>/dev/null | tail --lines=1 )
 			a=(${line//:/ })
 			pname="${a[0]}"
-			echo "$pname"
+			if [[ -n "$pname" ]] ; then
+				echo "$pname"
+			else
+				echo "$name"
+			fi
 		;;
 
 		"pacman")
@@ -206,11 +210,11 @@ name="$1"
 		;;
 
 		"pacman")
-			INSTALL="echo require.sh supported package manager not found"
+			INSTALL="sudo pacman --sync --noconfirm $name"
 		;;
 
 		"yum")
-			INSTALL="echo require.sh supported package manager not found"
+			INSTALL="sudo yum install $name"
 		;;
 
 		*)
@@ -226,7 +230,7 @@ name="$1"
 	# try and do it
 	if ! [[ -n "$REQUIRE_DRY" ]] ; then
 		if [[ -n "$REQUIRE_QUIET" ]] ; then
-			$INSTALL > /dev/null 2>&1
+			$INSTALL >/dev/null 2>&1
 		else
 			$INSTALL
 		fi
