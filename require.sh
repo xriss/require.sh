@@ -2,6 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
+REQUIRE_VERSION="0.1"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -9,19 +10,6 @@ declare -A pmap
 # I guess we should generate this from a better database...
 
 pmap["build-essential"]="build-essential base-devel"
-pmap["mingw"]="mingw-w64"
-pmap["libreadline-dev"]="libreadline-dev readline"
-pmap["libluajit-5.1-dev"]="libluajit-5.1-dev luajit"
-pmap["libssl-dev"]="libssl-dev openssl openssl-devel"
-pmap["libsdl2-dev"]="libsdl2-devsdl2"
-pmap["libgl1-mesa-dev"]="libgl1-mesa-dev mesa mesa-libGL-devel"
-pmap["libx11-dev"]="libx11-dev libx11 libX11-devel"
-pmap["libasound2-dev"]="libasound2-dev alsa-lib alsa-lib-devel"
-pmap["libudev-dev"]="libudev-dev libudev"
-pmap["libpulse-dev"]="libpulse-dev libpulse"
-
-
-
 
 
 declare -A argf
@@ -146,32 +134,111 @@ name="$1"
 
 }
 
-INSTALL="echo require.sh supported package manager not found"
-if   ispac apt-get ; then INSTALL="apt-get install -y"
-elif ispac pacman  ; then INSTALL="pacman --sync --noconfirm"
-elif ispac apt-cyg ; then INSTALL="apt-cyg install -y"
-elif ispac pkg     ; then INSTALL="pkg install"
-elif ispac yum     ; then INSTALL="yum install"
-elif ispac dnf     ; then INSTALL="dnf install"
-elif ispac emerge  ; then INSTALL="emerge"
-elif ispac zypper  ; then INSTALL="zypper install"
-elif ispac swupd   ; then INSTALL="swupd bundle-add"
-elif ispac opkg    ; then INSTALL="opkg install"
-elif ispac tazpkg  ; then INSTALL="tazpkg get-install"
-elif ispac tlmgr   ; then INSTALL="tlmgr install"
-elif ispac conda   ; then INSTALL="conda install"
-elif ispac brew    ; then INSTALL="brew cask install"
-elif ispac port    ; then INSTALL="port install"
-elif ispac snap    ; then INSTALL="snap install"
+# pick the pac style we will be using
+PAC=""
+if   ispac apt     ; then PAC="apt"
+elif ispac pacman  ; then PAC="pacman"
+elif ispac yum     ; then PAC="yum"
 fi
 
 
-# lookup pac names
+#INSTALL="echo require.sh supported package manager not found"
+#if   ispac apt-get ; then INSTALL="apt-get install -y"
+#elif ispac pacman  ; then INSTALL="pacman --sync --noconfirm"
+#elif ispac yum     ; then INSTALL="yum install"
+#elif ispac pkg     ; then INSTALL="pkg install"
+#elif ispac dnf     ; then INSTALL="dnf install"
+#elif ispac emerge  ; then INSTALL="emerge"
+#elif ispac zypper  ; then INSTALL="zypper install"
+#elif ispac swupd   ; then INSTALL="swupd bundle-add"
+#elif ispac opkg    ; then INSTALL="opkg install"
+#elif ispac tazpkg  ; then INSTALL="tazpkg get-install"
+#elif ispac tlmgr   ; then INSTALL="tlmgr install"
+#elif ispac conda   ; then INSTALL="conda install"
+#elif ispac apt-cyg ; then INSTALL="apt-cyg install -y"
+#elif ispac brew    ; then INSTALL="brew cask install"
+#elif ispac port    ; then INSTALL="port install"
+#elif ispac snap    ; then INSTALL="snap install"
+#fi
 
+
+# search for package that contains this file or dir
+searchpac() {
+name="$1"
+
+	case $PAC in
+
+		"apt")
+			line=$( dpkg -S $name | tail --lines=1 )
+			a=(${line//:/ })
+			pname="${a[0]}"
+			echo "$pname"
+		;;
+
+		"pacman")
+			echo "$name"
+		;;
+
+		"yum")
+			echo "$name"
+		;;
+
+		*)
+			echo "$name"
+		;;
+
+	esac
+}
+
+# install package by name
+installpac() {
+name="$1"
+
+	case $PAC in
+
+		"apt")
+			INSTALL="sudo apt install -y $name"
+		;;
+
+		"pacman")
+			INSTALL="echo require.sh supported package manager not found"
+		;;
+
+		"yum")
+			INSTALL="echo require.sh supported package manager not found"
+		;;
+
+		*)
+			INSTALL="echo require.sh supported package manager not found"
+		;;
+
+	esac
+
+	# say what we are going to do
+	if ! [[ -n "$REQUIRE_QUIET" ]] ; then
+		echo "require.sh is trying to $INSTALL"
+	fi
+	# try and do it
+	if ! [[ -n "$REQUIRE_DRY" ]] ; then
+		if [[ -n "$REQUIRE_QUIET" ]] ; then
+			$INSTALL > /dev/null 2>&1
+		else
+			$INSTALL
+		fi
+	fi
+
+
+}
+
+# lookup pac names
 getpac() {
 name="$1"
 
-	if [[ ${pmap[$name]} ]] ; then
+	if [[ "${name:0:1}" = "/" ]] ; then	# turn a path into a package
+		name=$(searchpac $name)
+	fi
+	
+	if [[ ${pmap[$name]} ]] ; then # replace bad package names
 		echo ${pmap[$name]}
 	else
 		echo $name
@@ -196,18 +263,7 @@ name="$1"
 	pnames=($(getpac $name))
 	for pname in "${pnames[@]}" ; do
 
-		# say what we are going to do
-		if ! [[ -n "$REQUIRE_QUIET" ]] ; then
-			echo "require.sh is trying to sudo $INSTALL $pname"
-		fi
-		# try and do it
-		if ! [[ -n "$REQUIRE_DRY" ]] ; then
-			if [[ -n "$REQUIRE_QUIET" ]] ; then
-				sudo $INSTALL $pname > /dev/null 2>&1
-			else
-				sudo $INSTALL $pname
-			fi
-		fi
+		installpac $pname
 		
 		# exit if command now exists
 		if ! [[ -n "$REQUIRE_FORCE" ]] ; then
@@ -239,6 +295,8 @@ elif [[ -n "$REQUIRE_HELP" ]] ; then
 
 require [--flags] name [name...]
 
+	VERSION $REQUIRE_VERSION
+
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
 	exist in the path. We assume the package name and command name are the same 
@@ -253,9 +311,8 @@ require [--flags] name [name...]
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt-get pacman apt-cyg pkg yum dnf emerge zypper 
-		swupd opkg tazpkg tlmgr conda brew port snap   
-			
+		following values : apt pacman yum   
+
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
 		run them.
@@ -265,7 +322,8 @@ require [--flags] name [name...]
 
 	--force
 		Do not check if command exists, always try and install each candidate 
-		package. Usefull for packages that do not provide a command.
+		package. Usefull for packages that do not provide a command or file we 
+		can easily test for.
 		
 	--reinstall-this-script
 		Reinstall this script from github using wget.
