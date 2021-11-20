@@ -27,3 +27,52 @@ The above will work if you have wget available and then
 	require --help
 	
 Will give you more information about how to use it.
+
+HELP
+
+./require.sh [--flags] name [name...]
+
+	VERSION 0.11
+
+	Attempt to sudo install packages to provide all the given commands using 
+	whatever packagemanager we can find. Do nothing if the commands already 
+	exist in the path. We assume the package name and command name are the same 
+	but also have a list of exceptions and alternative names we can try. We may 
+	need to try a few candidates so just because you see an error does not mean 
+	that we did not suceed.
+	
+	Possible --flags are :
+	
+	--version
+		Print version and exit.
+
+	--help
+		Print this help text.
+
+	--pac=*
+		Force the use of this package manager where * should be one of the 
+		following values : apt pacman yum   
+
+	--dry
+		Enable dry run, we will print the commands we want to run but will not 
+		run them.
+
+	--quiet
+		Do not print the output from the package manager.
+
+	--force
+		Do not check if command exists, always try and install each candidate 
+		package. Usefull for packages that do not provide a command or file we 
+		can easily test for.
+		
+	--reinstall-this-script
+		Reinstall this script from github using wget.
+
+	--no-*
+		Disable a previously set flag where * is the flag name. eg --no-dry
+		
+	These flags can also be set using environment variables prefixed with 
+	REQUIRE_ and capitalize flagn ame eg :
+		export REQUIRE_DRY=1
+	Would enable the --dry flag but still allow it to be unset with --no-dry
+
