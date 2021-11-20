@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.113"
+REQUIRE_VERSION_NUMBER="0.115"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -14,9 +14,9 @@ pmap["build-essential"]="build-essential base-devel"
 
 # configure these flags to not expect values so they will not steal the next token
 boolean_flags=("version help dry quiet force reinstall-this-script")
-declare -A argf
+declare -A boolean_flaga
 for flag in $boolean_flags ; do
-	argf[$flag]="1"
+	boolean_flaga[$flag]="1"
 done
 
 # fill in these arrays as output
@@ -52,7 +52,7 @@ for arg in "$@" ; do
 					val="${a[1]}"
 					flags["$set"]="$val"
 				else # --var val
-					if [[ ${argf[$set]} ]] ; then # no val expected
+					if [[ ${boolean_flaga[$set]} ]] ; then # no val expected
 						flags["$set"]="1"
 					else
 						flags["$set"]="1" # temporary value
@@ -83,33 +83,13 @@ for key in "${!flags[@]}" ; do
 			export REQUIRE_PAC="$val"
 		;;
 
-		"dry")
-			export REQUIRE_DRY="$val"
-		;;
-
-		"quiet")
-			export REQUIRE_QUIET="$val"
-		;;
-
-		"force")
-			export REQUIRE_FORCE="$val"
-		;;
-
-		"help")
-			export REQUIRE_HELP="$val"
-		;;
-
-		"version")
-			export REQUIRE_VERSION="$val"
-		;;
-
-		"reinstall-this-script")
-			export REQUIRE_REINSTALL_THIS_SCRIPT="$val"
-		;;
-
-
 		*)
-			echo "unknown flag $key=$val"
+			if [[ ${boolean_flaga[$key]} ]] ; then
+				export REQUIRE_${key^^}="$val"
+			else
+				echo "unknown flag $key=$val"
+				exit 20
+			fi
 		;;
 
 	esac
@@ -146,6 +126,21 @@ elif ispac pkg     ; then PAC="pkg"
 elif ispac yum     ; then PAC="yum"
 fi
 
+# install dependencies for this script to use this package manager
+case $PAC in
+
+	"apt")
+		if ! [[ -x "$(command -v apt-file)" ]] ; then
+			echo " require.sh is trying to sudo install apt-file so we can search for packages "
+			sudo apt install -y apt-file
+			sudo apt-file update
+		fi
+	;;
+
+esac
+
+
+
 # search for package that contains this file or dir
 searchpac() {
 name="$1"
@@ -153,7 +148,7 @@ name="$1"
 	case $PAC in
 
 		"apt")
-			line=$( dpkg -S $name 2>/dev/null | tail --lines=1 )
+			line=$( apt-file search $name 2>/dev/null | tail --lines=1 )
 			a=(${line//:/ })
 			pname="${a[0]}"
 			if [[ -n "$pname" ]] ; then
@@ -336,7 +331,8 @@ $0 [--flags] name [name...]
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
-		run them.
+		run them. NB: We may still try to install dependencies that 
+		enable this script to run.
 
 	--quiet
 		Do not print the output from the package manager.

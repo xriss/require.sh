@@ -55,7 +55,7 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.113
+	VERSION 0.115
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
@@ -78,7 +78,8 @@ HELP
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
-		run them.
+		run them. NB: We may still try to install dependencies that 
+		enable this script to run.
 
 	--quiet
 		Do not print the output from the package manager.
