@@ -289,11 +289,15 @@ if [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
 
 echo
 echo
-echo "PLEASE WAIT"
+echo " PLEASE WAIT "
+echo
+echo
 sudo wget -O /usr/local/bin/require https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
 sudo chmod +x /usr/local/bin/require
-echo "SCRIPT HAS BEEN REINSTALLED WITH LATEST VERSION"
-require --version
+echo
+echo
+echo " REQUIRE.SH HAS BEEN REINSTALLED WITH LATEST VERSION FROM GITHUB "
+echo " PRESS RETURN TO CONTINUE "
 echo
 echo
 
