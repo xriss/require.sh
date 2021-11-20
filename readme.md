@@ -55,7 +55,7 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.11
+	VERSION 0.112
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
@@ -74,7 +74,7 @@ HELP
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt pacman yum dnf
+		following values : apt pacman yum dnf pkg
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 

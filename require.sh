@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.11"
+REQUIRE_VERSION_NUMBER="0.112"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -143,8 +143,9 @@ name="$1"
 PAC=""
 if   ispac apt     ; then PAC="apt"
 elif ispac pacman  ; then PAC="pacman"
-elif ispac yum     ; then PAC="yum"
 elif ispac dnf     ; then PAC="dnf"
+elif ispac pkg     ; then PAC="pkg"
+elif ispac yum     ; then PAC="yum"
 fi
 
 # search for package that contains this file or dir
@@ -201,6 +202,10 @@ name="$1"
 
 		"dnf")
 			INSTALL="sudo dnf install -y $name"
+		;;
+
+		"pkg")
+			INSTALL="sudo pkg install $name"
 		;;
 
 		*)
@@ -326,7 +331,7 @@ $0 [--flags] name [name...]
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt pacman yum   
+		following values : apt pacman yum dnf pkg
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
