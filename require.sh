@@ -185,11 +185,23 @@ name="$1"
 		;;
 
 		"pacman")
-			echo "$name"
+			line=$( pacman -F $filename $name 2>/dev/null | tail --lines=1 )
+			pname="$line"
+			if [[ -n "$pname" ]] ; then
+				echo "$pname"
+			else
+				echo "$name"
+			fi
 		;;
 
 		"yum")
-			echo "$name"
+			line=$( yum whatprovides $filename $name 2>/dev/null | tail --lines=1 )
+			pname="$line"
+			if [[ -n "$pname" ]] ; then
+				echo "$pname"
+			else
+				echo "$name"
+			fi
 		;;
 
 		*)
@@ -361,7 +373,7 @@ $0 [--flags] name [name...]
 		Disable a previously set flag where * is the flag name. eg --no-dry
 		
 	These flags can also be set using environment variables prefixed with 
-	REQUIRE_ and capitalize eg :
+	REQUIRE_ and capitalize flagn ame eg :
 		export REQUIRE_DRY=1
 	Would enable the --dry flag but still allow it to be unset with --no-dry
 
