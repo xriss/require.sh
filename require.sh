@@ -282,6 +282,32 @@ if [[ -n "$REQUIRE_VERSION" ]] ; then
 require.sh VERSION $REQUIRE_VERSION_NUMBER
 EOF
 
+elif [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
+
+	sudo cat >/tmp/download-require.sh <<EOF
+
+echo
+echo
+echo " PLEASE WAIT "
+echo
+echo
+sudo wget -O /usr/local/bin/require.sh https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+sudo chmod +x /usr/local/bin/require.sh
+echo
+echo
+echo " REQUIRE.SH HAS BEEN REINSTALLED WITH LATEST VERSION FROM GITHUB "
+echo " PRESS RETURN TO CONTINUE "
+echo
+echo
+/usr/local/bin/require.sh --version
+echo
+echo
+
+EOF
+	sudo chmod +x /tmp/download-require.sh
+	/tmp/download-require.sh &
+	exit
+
 elif [[ -n "$REQUIRE_HELP" ]] ; then
 	cat <<EOF
 
@@ -332,32 +358,6 @@ $0 [--flags] name [name...]
 	Would enable the --dry flag but still allow it to be unset with --no-dry
 
 EOF
-
-elif [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
-
-	sudo cat >/tmp/download-require.sh <<EOF
-
-echo
-echo
-echo " PLEASE WAIT "
-echo
-echo
-sudo wget -O /usr/local/bin/require.sh https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
-sudo chmod +x /usr/local/bin/require.sh
-echo
-echo
-echo " REQUIRE.SH HAS BEEN REINSTALLED WITH LATEST VERSION FROM GITHUB "
-echo " PRESS RETURN TO CONTINUE "
-echo
-echo
-/usr/local/bin/require.sh --version
-echo
-echo
-
-EOF
-	sudo chmod +x /tmp/download-require.sh
-	/tmp/download-require.sh &
-	exit
 
 else
 
