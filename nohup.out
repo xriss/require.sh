@@ -1,0 +1,11 @@
+--2021-11-20 02:03:02--  https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+Resolving raw.githubusercontent.com (raw.githubusercontent.com)... 185.199.110.133, 185.199.111.133, 185.199.108.133, ...
+Connecting to raw.githubusercontent.com (raw.githubusercontent.com)|185.199.110.133|:443... connected.
+HTTP request sent, awaiting response... 200 OK
+Length: 7022 (6.9K) [text/plain]
+Saving to: ‘/usr/local/bin/require’
+
+     0K ......                                                100% 37.9M=0s
+
+2021-11-20 02:03:03 (37.9 MB/s) - ‘/usr/local/bin/require’ saved [7022/7022]
+
