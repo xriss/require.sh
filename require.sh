@@ -2,24 +2,22 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.112"
+REQUIRE_VERSION_NUMBER="0.113"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
 
-# I guess we should generate this from a better database...
+# and I guess we should generate this from a better database?
 
 pmap["build-essential"]="build-essential base-devel"
 
 
+# configure these flags to not expect values so they will not steal the next token
+boolean_flags=("version help dry quiet force reinstall-this-script")
 declare -A argf
-# configure these flags to not expect values so will not steal the next token
-argf["version"]="1"
-argf["help"]="1"
-argf["dry"]="1"
-argf["quiet"]="1"
-argf["force"]="1"
-argf["reinstall-this-script"]="1"
+for flag in $boolean_flags ; do
+	argf[$flag]="1"
+done
 
 # fill in these arrays as output
 declare -A args
@@ -278,30 +276,7 @@ name="$1"
 }
 
 
-if [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
-
-	sudo cat >/tmp/download-require.sh <<EOF
-
-echo
-echo
-echo " PLEASE WAIT "
-echo
-echo
-sudo wget -O /usr/local/bin/require https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
-sudo chmod +x /usr/local/bin/require
-echo
-echo
-echo " REQUIRE.SH HAS BEEN REINSTALLED WITH LATEST VERSION FROM GITHUB "
-echo " PRESS RETURN TO CONTINUE "
-echo
-echo
-
-EOF
-	sudo chmod +x /tmp/download-require.sh
-	/tmp/download-require.sh &
-	exit
-
-elif [[ -n "$REQUIRE_VERSION" ]] ; then
+if [[ -n "$REQUIRE_VERSION" ]] ; then
 
 	cat <<EOF
 require.sh VERSION $REQUIRE_VERSION_NUMBER
@@ -357,6 +332,32 @@ $0 [--flags] name [name...]
 	Would enable the --dry flag but still allow it to be unset with --no-dry
 
 EOF
+
+elif [[ -n "$REQUIRE_REINSTALL_THIS_SCRIPT" ]] ; then
+
+	sudo cat >/tmp/download-require.sh <<EOF
+
+echo
+echo
+echo " PLEASE WAIT "
+echo
+echo
+sudo wget -O /usr/local/bin/require.sh https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+sudo chmod +x /usr/local/bin/require.sh
+echo
+echo
+echo " REQUIRE.SH HAS BEEN REINSTALLED WITH LATEST VERSION FROM GITHUB "
+echo " PRESS RETURN TO CONTINUE "
+echo
+echo
+/usr/local/bin/require.sh --version
+echo
+echo
+
+EOF
+	sudo chmod +x /tmp/download-require.sh
+	/tmp/download-require.sh &
+	exit
 
 else
 
