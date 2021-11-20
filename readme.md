@@ -16,8 +16,17 @@ By default we just assume that the package name is the same as the command eg:
 Will check if the git command exists and if not will install the git package 
 using whatever package manager we can find.
 
+If however you give a fullpath, eg: something beginning with /
 
-Install by just copying the bash script to /usr/local/bin/require with +x
+	require /usr/include/libudev.h
+
+Then we will check if this file exists and if not attempt to find a package 
+that would install that exact file. Include files are a good one to pick as it 
+should install the dev package and the library and they should be a more 
+generic path than .so files.
+
+Install this script by just copying the bash script to /usr/local/bin/require 
+with +x
 
 	sudo wget -O /usr/local/bin/require https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
 	sudo chmod +x /usr/local/bin/require
@@ -26,7 +35,8 @@ The above will work if you have wget available and then
 
 	require --help
 	
-Will give you more information about how to use it.
+Will give you more information about how to use it and the output is what you 
+will see below.
 
 HELP
 
