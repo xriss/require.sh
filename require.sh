@@ -144,28 +144,8 @@ PAC=""
 if   ispac apt     ; then PAC="apt"
 elif ispac pacman  ; then PAC="pacman"
 elif ispac yum     ; then PAC="yum"
+elif ispac dnf     ; then PAC="dnf"
 fi
-
-
-#INSTALL="echo require.sh supported package manager not found"
-#if   ispac apt-get ; then INSTALL="apt-get install -y"
-#elif ispac pacman  ; then INSTALL="pacman --sync --noconfirm"
-#elif ispac yum     ; then INSTALL="yum install"
-#elif ispac pkg     ; then INSTALL="pkg install"
-#elif ispac dnf     ; then INSTALL="dnf install"
-#elif ispac emerge  ; then INSTALL="emerge"
-#elif ispac zypper  ; then INSTALL="zypper install"
-#elif ispac swupd   ; then INSTALL="swupd bundle-add"
-#elif ispac opkg    ; then INSTALL="opkg install"
-#elif ispac tazpkg  ; then INSTALL="tazpkg get-install"
-#elif ispac tlmgr   ; then INSTALL="tlmgr install"
-#elif ispac conda   ; then INSTALL="conda install"
-#elif ispac apt-cyg ; then INSTALL="apt-cyg install -y"
-#elif ispac brew    ; then INSTALL="brew cask install"
-#elif ispac port    ; then INSTALL="port install"
-#elif ispac snap    ; then INSTALL="snap install"
-#fi
-
 
 # search for package that contains this file or dir
 searchpac() {
@@ -185,17 +165,7 @@ name="$1"
 		;;
 
 		"pacman")
-			line=$( pacman -F $filename $name 2>/dev/null | tail --lines=1 )
-			pname="$line"
-			if [[ -n "$pname" ]] ; then
-				echo "$pname"
-			else
-				echo "$name"
-			fi
-		;;
-
-		"yum")
-			line=$( yum whatprovides $filename $name 2>/dev/null | tail --lines=1 )
+			line=$( pacman -F --quiet $name 2>/dev/null | tail --lines=1 )
 			pname="$line"
 			if [[ -n "$pname" ]] ; then
 				echo "$pname"
@@ -226,7 +196,11 @@ name="$1"
 		;;
 
 		"yum")
-			INSTALL="sudo yum install $name"
+			INSTALL="sudo yum install -y $name"
+		;;
+
+		"dnf")
+			INSTALL="sudo dnf install -y $name"
 		;;
 
 		*)

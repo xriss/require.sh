@@ -16,9 +16,12 @@ If however you give a fullpath, something beginning with /
 	require /usr/include/libudev.h
 
 Then we will check if this file exists and if not attempt to find a package 
-that would install that exact file. Include files are a good one to pick as it 
+that would install that exact file. Include files are a good pick as it 
 should install the dev package and the library and they should be a more 
 generic path than .so files.
+
+This is actually how some package managers, such as dnf, already work but we need
+to do a bit more for apt, pacman etc.
 
 
 DEVELOPMENT
@@ -28,7 +31,7 @@ This is intended to be developed by watching it break and then fixing it. Which
 means if it breaks for you then you get to fix it :)
 
 Probably that just means changing the dictionaries at the top of the require.sh 
-script to fix a package name.
+script to fix a package name or adjusting package manager parameters.
 
 
 INSTALL
@@ -71,7 +74,7 @@ HELP
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt pacman yum   
+		following values : apt pacman yum dnf
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
