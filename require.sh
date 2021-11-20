@@ -319,7 +319,7 @@ EOF
 elif [[ -n "$REQUIRE_HELP" ]] ; then
 	cat <<EOF
 
-require [--flags] name [name...]
+$0 [--flags] name [name...]
 
 	VERSION $REQUIRE_VERSION_NUMBER
 
