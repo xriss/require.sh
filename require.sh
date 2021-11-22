@@ -12,12 +12,19 @@ declare -A pmap
 pmap["build-essential"]="build-essential base-devel"
 
 
-# configure these flags to not expect values so they will not steal the next token
+# these are flags expect a value after them so will steal the next token
+value_flags=("pac")
+
+# these flags do not expect values so they will not steal the next token
 boolean_flags=("version help dry quiet force reinstall-this-script")
+
+
+declare -A all_flaga
+declare -A value_flaga
 declare -A boolean_flaga
-for flag in $boolean_flags ; do
-	boolean_flaga[$flag]="1"
-done
+
+for flag in $boolean_flags ; do boolean_flaga[$flag]="1" ; all_flaga[$flag]="1" ; done
+for flag in $value_flags   ; do value_flaga[$flag]="1"   ; all_flaga[$flag]="1" ; done
 
 # fill in these arrays as output
 declare -A args
@@ -77,23 +84,13 @@ fi
 for key in "${!flags[@]}" ; do
 	val=${flags[$key]}
 
-	case $key in
-
-		"pac")
-			export REQUIRE_PAC="$val"
-		;;
-
-		*)
-			if [[ ${boolean_flaga[$key]} ]] ; then
-				envkey=${key//-/_}
-				export REQUIRE_${envkey^^}="$val"
-			else
-				echo "unknown flag $key=$val"
-				exit 20
-			fi
-		;;
-
-	esac
+	if [[ ${all_flaga[$key]} ]] ; then
+		envkey=${key//-/_}
+		export REQUIRE_${envkey^^}="$val"
+	else
+		echo "unknown flag $key=$val"
+		exit 20
+	fi
 
 done
 
