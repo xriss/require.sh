@@ -55,14 +55,16 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.115
+	VERSION 0.116
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
 	exist in the path. We assume the package name and command name are the same 
-	but also have a list of exceptions and alternative names we can try. We may 
-	need to try a few candidates so just because you see an error does not mean 
-	that we did not suceed.
+	or will attempt to look up a package if given a full path to a file it 
+	would install ( name begins with a / ) possibly we may even have to try a 
+	few candidates so just because you see an error from the package manager 
+	does not mean that we did not suceed. If all commands/files are available 
+	then we will print nothing and do nothing.
 	
 	Possible --flags are :
 	
@@ -87,7 +89,7 @@ HELP
 	--force
 		Do not check if command exists, always try and install each candidate 
 		package. Usefull for packages that do not provide a command or file we 
-		can easily test for.
+		can easily test for so instead we must require a package name.
 		
 	--reinstall-this-script
 		Reinstall this script from github using wget.
@@ -96,7 +98,7 @@ HELP
 		Disable a previously set flag where * is the flag name. eg --no-dry
 		
 	These flags can also be set using environment variables prefixed with 
-	REQUIRE_ and capitalize flagn ame eg :
+	REQUIRE_ and capitalize flagn name with - replaced with _ eg :
 		export REQUIRE_DRY=1
 	Would enable the --dry flag but still allow it to be unset with --no-dry
 
