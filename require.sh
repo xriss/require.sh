@@ -11,25 +11,55 @@ declare -A pmap
 
 pmap["build-essential"]="build-essential base-devel"
 
+# commandline and env inputs
+arg_flags=("version help dry quiet force reinstall-this-script pac=")
 
-# these are flags expect a value after them so will steal the next token
-value_flags=("pac")
+arg_get() {
+key="$1"
+	envkey=${key//-/_}
+	if printenv REQUIRE_${envkey^^} ; then
+		return 0
+	fi
+	return 20
+}
 
-# these flags do not expect values so they will not steal the next token
-boolean_flags=("version help dry quiet force reinstall-this-script")
+arg_set() {
+key="$1"
+val="$2"
+	envkey=${key//-/_}
+	export REQUIRE_${envkey^^}="$val"
+}
 
-
+#parse arg_flags
 declare -A all_flaga
 declare -A value_flaga
 declare -A boolean_flaga
-
-for flag in $boolean_flags ; do boolean_flaga[$flag]="1" ; all_flaga[$flag]="1" ; done
-for flag in $value_flags   ; do value_flaga[$flag]="1"   ; all_flaga[$flag]="1" ; done
+for flag in $arg_flags ; do
+	if [[ "${flag}" == *"="* ]]; then
+		fs=(${flag//=/ })
+		boolean_flaga[${fs[0]}]="1"
+		all_flaga[${fs[0]}]="1"
+		if arg_get ${fs[0]} >/dev/null ; then
+			:
+		else
+			arg_set "${fs[0]}" "${fs[1]}"
+		fi
+	else
+		fs=(${flag//:/ })
+		boolean_flaga[${fs[0]}]="1"
+		all_flaga[${fs[0]}]="1"
+		if arg_get ${fs[0]} >/dev/null ; then
+			:
+		else
+			arg_set "${fs[0]}" "${fs[1]}"
+		fi
+	fi
+done
 
 # fill in these arrays as output
 declare -A args
 declare -A flags
-mode=names
+mode="names"
 for arg in "$@" ; do
 
 	case $mode in
@@ -37,7 +67,7 @@ for arg in "$@" ; do
 		"set")
 			val="$arg"
 			flags["$set"]="$val"
-			mode=names
+			mode="names"
 		;;
 
 		"done")
@@ -63,7 +93,7 @@ for arg in "$@" ; do
 						flags["$set"]="1"
 					else
 						flags["$set"]="1" # temporary value
-						mode=set
+						mode="set"
 					fi
 				fi
 			else
@@ -74,6 +104,9 @@ for arg in "$@" ; do
 	esac
 
 done
+
+
+
 
 
 # process flags we found here and probably overwrite env vars
