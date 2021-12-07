@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.116"
+REQUIRE_VERSION_NUMBER="0.117"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -37,7 +37,7 @@ declare -A boolean_flaga
 for flag in $arg_flags ; do
 	if [[ "${flag}" == *"="* ]]; then
 		fs=(${flag//=/ })
-		boolean_flaga[${fs[0]}]="1"
+		value_flaga[${fs[0]}]="1"
 		all_flaga[${fs[0]}]="1"
 		if arg_get ${fs[0]} >/dev/null ; then
 			:
