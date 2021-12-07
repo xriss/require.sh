@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.117"
+REQUIRE_VERSION_NUMBER="0.118"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -118,8 +118,7 @@ for key in "${!flags[@]}" ; do
 	val=${flags[$key]}
 
 	if [[ ${all_flaga[$key]} ]] ; then
-		envkey=${key//-/_}
-		export REQUIRE_${envkey^^}="$val"
+		arg_set "${key}" "$val"
 	else
 		echo "unknown flag $key=$val"
 		exit 20
