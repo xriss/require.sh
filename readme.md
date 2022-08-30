@@ -92,7 +92,7 @@ HELP
 		can easily test for so instead we must require a package name.
 		
 	--reinstall-this-script
-		Reinstall this script from github using wget.
+		Reinstall this script from github using curl.
 
 	--no-*
 		Disable a previously set flag where * is the flag name. eg --no-dry

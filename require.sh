@@ -324,7 +324,7 @@ echo
 echo " PLEASE WAIT "
 echo
 echo
-sudo wget -O /usr/local/bin/require.sh https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+sudo curl https://raw.githubusercontent.com/xriss/require.sh/main/require.sh --output /usr/local/bin/require
 sudo chmod +x /usr/local/bin/require.sh
 echo
 echo
@@ -383,7 +383,7 @@ $0 [--flags] name [name...]
 		can easily test for so instead we must require a package name.
 		
 	--reinstall-this-script
-		Reinstall this script from github using wget.
+		Reinstall this script from github using curl.
 
 	--no-*
 		Disable a previously set flag where * is the flag name. eg --no-dry
