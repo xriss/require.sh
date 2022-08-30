@@ -6,7 +6,7 @@ fi
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.121"
+REQUIRE_VERSION_NUMBER="0.122"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -151,12 +151,12 @@ name="$1"
 
 # pick the pac style we will be using
 PAC=""
-if   ispac apt     ; then PAC="apt"
+if   ispac brew    ; then PAC="brew"
+elif ispac apt     ; then PAC="apt"
 elif ispac pacman  ; then PAC="pacman"
 elif ispac dnf     ; then PAC="dnf"
 elif ispac pkg     ; then PAC="pkg"
 elif ispac yum     ; then PAC="yum"
-elif ispac brew    ; then PAC="brew"
 fi
 
 # install dependencies for this script to use this package manager
