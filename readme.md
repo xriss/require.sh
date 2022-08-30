@@ -40,8 +40,8 @@ INSTALL
 You can install require.sh by copying the bash script to /usr/local/bin/require 
 with +x So this snippet will download the latest version from github.
 
-	sudo curl https://raw.githubusercontent.com/xriss/require.sh/main/require.sh --output /usr/local/bin/require
-	sudo chmod +x /usr/local/bin/require
+	sudo curl https://raw.githubusercontent.com/xriss/require.sh/main/require.sh --output /usr/local/bin/require.sh
+	sudo chmod +x /usr/local/bin/require.sh
 
 and then
 
@@ -55,7 +55,7 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.120
+	VERSION 0.121
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 

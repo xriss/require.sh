@@ -6,7 +6,7 @@ fi
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.120"
+REQUIRE_VERSION_NUMBER="0.121"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -323,7 +323,7 @@ echo
 echo " PLEASE WAIT "
 echo
 echo
-sudo curl https://raw.githubusercontent.com/xriss/require.sh/main/require.sh --output /usr/local/bin/require
+sudo curl https://raw.githubusercontent.com/xriss/require.sh/main/require.sh --output /usr/local/bin/require.sh
 sudo chmod +x /usr/local/bin/require.sh
 echo
 echo
