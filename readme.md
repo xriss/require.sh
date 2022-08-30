@@ -1,8 +1,8 @@
 REQUIRE.SH
 ==========
 
-This bash script attempts to install packages, probably for a command, in a 
-generic way across multiple package managers.
+This bash (version 4+) script attempts to install packages, probably 
+for a command, in a generic way across multiple package managers.
 
 By default we just assume that the package name is the same as the command
 
@@ -55,7 +55,7 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.119
+	VERSION 0.120
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
