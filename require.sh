@@ -1,4 +1,3 @@
-#!/bin/bash
 
 if [[ "${BASH_VERSINFO:-0}" -lt 4 ]]; then
   echo "This script requires bash >= 4"
