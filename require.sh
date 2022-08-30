@@ -6,7 +6,7 @@ fi
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.122"
+REQUIRE_VERSION_NUMBER="0.123"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -235,7 +235,7 @@ name="$1"
 		;;
 
 		"brew")
-			INSTALL="sudo brew install $name"
+			INSTALL="brew install $name"
 		;;
 
 		*)
