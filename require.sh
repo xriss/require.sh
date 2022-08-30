@@ -2,7 +2,7 @@
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.118"
+REQUIRE_VERSION_NUMBER="0.119"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap
@@ -152,6 +152,7 @@ elif ispac pacman  ; then PAC="pacman"
 elif ispac dnf     ; then PAC="dnf"
 elif ispac pkg     ; then PAC="pkg"
 elif ispac yum     ; then PAC="yum"
+elif ispac brew    ; then PAC="brew"
 fi
 
 # install dependencies for this script to use this package manager
@@ -227,6 +228,10 @@ name="$1"
 
 		"pkg")
 			INSTALL="sudo pkg install $name"
+		;;
+
+		"brew")
+			INSTALL="sudo brew install $name"
 		;;
 
 		*)
@@ -357,7 +362,7 @@ $0 [--flags] name [name...]
 
 	--pac=*
 		Force the use of this package manager where * should be one of the 
-		following values : apt pacman yum dnf pkg
+		following values : apt pacman yum dnf pkg brew
 
 	--dry
 		Enable dry run, we will print the commands we want to run but will not 
