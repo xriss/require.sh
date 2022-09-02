@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 
 if [[ "${BASH_VERSINFO:-0}" -lt 4 ]]; then
   echo "This script requires bash >= 4"
@@ -6,7 +7,7 @@ fi
 
 trap ' trap - INT ;  kill -s INT "$$" ' INT
 
-REQUIRE_VERSION_NUMBER="0.123"
+REQUIRE_VERSION_NUMBER="0.124"
 
 # map special command names to package, otherwise we assume they are the same
 declare -A pmap

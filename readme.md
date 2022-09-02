@@ -55,7 +55,7 @@ HELP
 
 ./require.sh [--flags] name [name...]
 
-	VERSION 0.123
+	VERSION 0.124
 
 	Attempt to sudo install packages to provide all the given commands using 
 	whatever packagemanager we can find. Do nothing if the commands already 
