@@ -6,14 +6,14 @@ for a command, in a generic way across multiple package managers.
 
 By default we just assume that the package name is the same as the command
 
-	require git
+	require.sh git
 
 Will check if the git command exists and if not will install a package named 
 git using whatever package manager we can find.
 
 If however you give a fullpath, something beginning with /
 
-	require /usr/include/libudev.h
+	require.sh /usr/include/libudev.h
 
 Then we will check if this file exists and if not attempt to find a package 
 that would install that exact file. Include files are a good pick as it 
@@ -45,7 +45,7 @@ with +x So this snippet will download the latest version from github.
 
 and then
 
-	require --help
+	require.sh --help
 	
 Will give you more information about how to use it and the output is what you 
 will see below.
