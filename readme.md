@@ -7,8 +7,11 @@ for a command, in a generic way across multiple package managers.
 This is intended to be used as a bit of boiler plate at the top of 
 scripts to make sure that the rest of the script will have the required 
 tools. So something like this will install require.sh and then install 
-ffmpeg, exiftool and uvx. The rest of the script may then use these 
-tools.
+ffmpeg, exiftool and uvx. If these tools are already available (IE not 
+the first run or user has previously installed them) then the script 
+will not do anything and be silent. The rest of the script can then use 
+these tools and this should work across multiple distros and package 
+managers.
 
 	# first install a require script that should work on multiple flavors of linux
 	if ! [[ -x "$(command -v require.sh)" ]] ; then
@@ -20,8 +23,26 @@ tools.
 	require.sh ffmpeg
 	require.sh exiftool
 	require.sh uvx
+	
+If you wish to run a script with this sort boiler plate code but do not 
+trust require.sh then you can fake around it like so.
 
-By default we just assume that the package name is the same as the command
+	bash -c 'function require.sh { echo "REQUIRE.SH" "$@"; } ; export -f "require.sh" ; ./nameofscript '
+
+Where ./nameofscript is the script you want to run with require.sh 
+disabled and replaced with an echo command. But if you care about that 
+sort of thing you should be able to work that out for yourself and of 
+course you should provide the dependencies manually.
+
+This is obviously all a little bit dangerous but the alternative is 
+broken confusing dependencies for dumb users. Mayhaps something like 
+this with a generic interface and a generic name should be a basic part 
+of all package managers...
+
+How else are we supposed to enjoy DLL hell?
+
+We are by design. intentionally dumb, so as default we just assume that 
+the package name is the same as the command. This is mostly true.
 
 	require.sh git
 
