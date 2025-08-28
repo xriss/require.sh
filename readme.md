@@ -4,6 +4,23 @@ REQUIRE.SH
 This bash (version 4+) script attempts to install packages, probably 
 for a command, in a generic way across multiple package managers.
 
+This is intended to be used as a bit of boiler plate at the top of 
+scripts to make sure that the rest of the script will have the required 
+tools. So something like this will install require.sh and then install 
+ffmpeg, exiftool and uvx. The rest of the script may then use these 
+tools.
+
+	# first install a require script that should work on multiple flavors of linux
+	if ! [[ -x "$(command -v require.sh)" ]] ; then
+		echo " we need sudo to install require.sh to /usr/local/bin from https://github.com/xriss/require.sh "
+		echo " if this scares you then add a dummy require.sh and provide the dependencies yourself "
+		sudo wget -O /usr/local/bin/require.sh https://raw.githubusercontent.com/xriss/require.sh/main/require.sh
+		sudo chmod +x /usr/local/bin/require.sh
+	fi
+	require.sh ffmpeg
+	require.sh exiftool
+	require.sh uvx
+
 By default we just assume that the package name is the same as the command
 
 	require.sh git
